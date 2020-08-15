@@ -26,7 +26,7 @@ class TrabajadorController extends Controller
      */
     public function create()
     {
-        //
+         return view('trabajadors.create');
     }
 
     /**
@@ -37,7 +37,18 @@ class TrabajadorController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+       $request->validate([
+          'responsable' => 'required',
+          'puesto' => 'required',
+          'departamento' => 'required',
+          'tipoDeContrato' => 'required',
+      ]);
+
+       Trabajador::create($request->all());
+
+       return redirect()->route('trabajadores.index')
+                      ->with('success','trabajador created successfully.');
     }
 
     /**
@@ -48,7 +59,8 @@ class TrabajadorController extends Controller
      */
     public function show(Trabajador $trabajador)
     {
-        //
+
+      return view('trabajadores.create');
     }
 
     /**
@@ -57,9 +69,10 @@ class TrabajadorController extends Controller
      * @param  \App\Trabajador  $trabajador
      * @return \Illuminate\Http\Response
      */
-    public function edit(Trabajador $trabajador)
+    public function edit($id)
     {
-         return view('trabajadors.edit',compact('trabajador'));
+      $trabajador = Trabajador::find($id);
+      return view('trabajadors.edit',compact('trabajador'));
     }
 
     /**
@@ -69,15 +82,17 @@ class TrabajadorController extends Controller
      * @param  \App\Trabajador  $trabajador
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Trabajador $trabajador)
+    public function update(Request $request, $id)
     {
-        $trabajador->update([
-            'responsable'=>request('responsable'),
-            'puesto'=>request('puesto'),
-            'departamento'=>request('departamento'),
-            'tipoDeContrato'=>request('tipoDeContrato'),
-        ]);
-        return redirect()->route('trabajadores.index')->with('succes','Actualizado correctamente');
+        $trabajador = Trabajador::find($id);
+
+        $trabajador->responsable = $request->get('responsable');
+        $trabajador->puesto = $request->get('puesto');
+        $trabajador->departamento = $request->get('departamento');
+        $trabajador->tipoDeContrato = $request->get('tipoDeContrato');
+        $trabajador->save();
+        return redirect()->route('trabajadores.index')
+              ->with('success','Trabajador update successfully');
     }
 
     /**
@@ -86,9 +101,11 @@ class TrabajadorController extends Controller
      * @param  \App\Trabajador  $trabajador
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Trabajador $trabajador)
+    public function destroy($id)
     {
-        $trabajador->delete();
-        return redirect()->route('trabajadores.index')->with('succes','Actualizado correctamente');
+      $trabajador = Trabajador::find($id);
+      $trabajador->delete();
+     return redirect()->route('trabajadores.index')
+           ->with('success','Trabajador deleted successfully');
     }
 }
